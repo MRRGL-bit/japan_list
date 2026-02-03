@@ -1,16 +1,8 @@
 {
   "name": "japan-app-quiz",
   "version": "1.0.0",
-  "description": "일본어 단어 퀴즈 + Resend 메일 (Vercel 배포)",
-  "scripts": {
-    "build": "echo 'Static site - no build'",
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  },
+  "private": true,
   "dependencies": {
     "resend": "^3.2.0"
-  },
-  "devDependencies": {
-    "vercel": "^33.0.0"
   }
 }
