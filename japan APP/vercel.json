@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "functions": {
+    "api/send-contact.js": {
+      "runtime": "@vercel/node@3"
+    }
+  }
+}
