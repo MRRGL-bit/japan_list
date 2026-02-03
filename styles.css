@@ -420,7 +420,7 @@ body {
   margin-top: 0.25rem;
 }
 
-/* 메일 보내기 버튼 */
+/* ---- Resend 메일 (문의 폼·모달) ---- */
 .btn-mail {
   width: 100%;
   margin-top: 0.75rem;
@@ -442,7 +442,6 @@ body {
   background: var(--accent-soft);
 }
 
-/* 메일 모달 */
 .modal {
   display: none;
   position: fixed;

@@ -2,6 +2,9 @@
   "name": "japan-app-quiz",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "build": "echo Done"
+  },
   "dependencies": {
     "resend": "^3.2.0"
   }

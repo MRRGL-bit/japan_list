@@ -1,7 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "",
-  "outputDirectory": ".",
   "functions": {
     "api/send-contact.js": {
       "runtime": "@vercel/node@3"

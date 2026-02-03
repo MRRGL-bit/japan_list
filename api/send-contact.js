@@ -1,6 +1,13 @@
+/**
+ * Resend 문의 메일 API
+ * - 수신: ssaebbung@gmail.com
+ * - 환경 변수: RESEND_API_KEY, FROM_EMAIL(선택, 기본 onboarding@resend.dev)
+ */
+
 const { Resend } = require("resend");
 
 const TO_EMAIL = "ssaebbung@gmail.com";
+const DEFAULT_FROM = "onboarding@resend.dev";
 
 function setCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -8,14 +15,27 @@ function setCors(res) {
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 }
 
-function escapeHtml(text) {
-  if (typeof text !== "string") return "";
+function escapeHtml(str) {
+  if (typeof str !== "string") return "";
   const map = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
-  return text.replace(/[&<>"']/g, (c) => map[c]);
+  return str.replace(/[&<>"']/g, (c) => map[c]);
+}
+
+function parseBody(req) {
+  const raw = req.body || {};
+  if (typeof raw === "string") {
+    try {
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  }
+  return raw;
 }
 
 module.exports = async (req, res) => {
   setCors(res);
+
   if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
@@ -26,25 +46,18 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const RESEND_API_KEY = process.env.RESEND_API_KEY;
-  const FROM_EMAIL = process.env.FROM_EMAIL || "onboarding@resend.dev";
+  const apiKey = process.env.RESEND_API_KEY;
+  const fromEmail = process.env.FROM_EMAIL || DEFAULT_FROM;
 
-  if (!RESEND_API_KEY) {
+  if (!apiKey) {
     res.status(503).json({
       success: false,
-      error: "메일 서버가 설정되지 않았습니다. RESEND_API_KEY를 확인해 주세요.",
+      error: "RESEND_API_KEY가 설정되지 않았습니다.",
     });
     return;
   }
 
-  let body = req.body || {};
-  if (typeof body === "string") {
-    try {
-      body = JSON.parse(body);
-    } catch {
-      body = {};
-    }
-  }
+  const body = parseBody(req);
   const { name, phone, age, email } = body;
 
   if (!name || !phone || !age || !email) {
@@ -55,9 +68,9 @@ module.exports = async (req, res) => {
     return;
   }
 
-  const resend = new Resend(RESEND_API_KEY);
+  const resend = new Resend(apiKey);
   const html = `
-    <h2>일본어 퀴즈 사이트 - 문의 내용</h2>
+    <h2>일본어 퀴즈 사이트 - 문의</h2>
     <p><strong>이름:</strong> ${escapeHtml(name)}</p>
     <p><strong>전화번호:</strong> ${escapeHtml(phone)}</p>
     <p><strong>나이:</strong> ${escapeHtml(String(age))}</p>
@@ -66,7 +79,7 @@ module.exports = async (req, res) => {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: fromEmail,
       to: TO_EMAIL,
       subject: `[일본어 퀴즈] 문의 - ${name}`,
       html,

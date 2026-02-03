@@ -41,6 +41,8 @@
   const scorePercent = $("score-percent");
   const resultDetails = $("result-details");
   const retryBtn = $("retry-btn");
+  // ---- Resend 메일 (ssaebbung@gmail.com 수신) ----
+  const MAIL_API = "/api/send-contact";
   const mailBtn = $("mail-btn");
   const mailModal = $("mail-modal");
   const mailModalClose = $("mail-modal-close");
@@ -233,12 +235,12 @@
   }
 
   function openMailModal() {
-    if (mailModal) {
-      mailModal.classList.add("active");
-      mailFormMessage.classList.add("hidden");
-      mailFormMessage.textContent = "";
-      if ($("contact-name")) $("contact-name").focus();
-    }
+    if (!mailModal) return;
+    mailModal.classList.add("active");
+    mailFormMessage.classList.add("hidden");
+    mailFormMessage.textContent = "";
+    const nameInput = $("contact-name");
+    if (nameInput) nameInput.focus();
   }
 
   function closeMailModal() {
@@ -256,10 +258,10 @@
     e.preventDefault();
     if (!mailForm) return;
 
-    const name = (mailForm.querySelector('[name="name"]') || {}).value.trim();
-    const phone = (mailForm.querySelector('[name="phone"]') || {}).value.trim();
-    const age = (mailForm.querySelector('[name="age"]') || {}).value.trim();
-    const email = (mailForm.querySelector('[name="email"]') || {}).value.trim();
+    const name = (mailForm.querySelector('[name="name"]')?.value ?? "").trim();
+    const phone = (mailForm.querySelector('[name="phone"]')?.value ?? "").trim();
+    const age = (mailForm.querySelector('[name="age"]')?.value ?? "").trim();
+    const email = (mailForm.querySelector('[name="email"]')?.value ?? "").trim();
 
     if (!name || !phone || !age || !email) {
       showFormMessage("모든 항목을 입력해 주세요.", true);
@@ -269,8 +271,8 @@
     mailSubmit.disabled = true;
     showFormMessage("전송 중...", false);
 
-    const apiBase = window.API_BASE_URL || "";
-    fetch(apiBase + "/api/send-contact", {
+    const apiUrl = (window.API_BASE_URL || "") + MAIL_API;
+    fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, phone, age, email }),
@@ -286,7 +288,7 @@
         }
       })
       .catch(() => {
-        showFormMessage("서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해 주세요.", true);
+        showFormMessage("서버에 연결할 수 없습니다.", true);
       })
       .finally(() => {
         mailSubmit.disabled = false;
