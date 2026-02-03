@@ -33,7 +33,7 @@ git add -A
 # 커밋 (변경 없으면 스킵)
 $status = git status --porcelain
 if ($status) {
-    git commit -m "일본어 단어 퀴즈 + Vercel/Resend 메일 기능"
+    git commit -m "Vercel 배포 설정 수정 (buildCommand, deploy 실패 해결)"
     git branch -M main 2>$null
     git push -u origin main
     Write-Host "푸시 완료: $remote"
