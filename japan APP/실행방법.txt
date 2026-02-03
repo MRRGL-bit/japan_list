@@ -50,6 +50,20 @@
 ※ 배포 후 나온 URL로 접속하면 퀴즈와 메일 보내기가 모두 동작합니다.
   문의 내용은 ssaebbung@gmail.com 으로 전달됩니다.
 
+■ Vercel에서 404가 날 때 (해결 방법)
+----------------------------------------
+GitHub 저장소에 "japan APP" 폴더가 있는 구조라면, Vercel이 루트에서
+index.html을 찾지 못해 404가 납니다.
+
+해결: Vercel 대시보드에서
+  1. 해당 프로젝트 클릭
+  2. Settings → General
+  3. "Root Directory" 항목에서 "Edit" 클릭
+  4. 값에 "japan APP" 입력 (저장소 안의 폴더 이름 그대로)
+  5. Save 후 Deployments → 맨 위 배포의 ... → Redeploy
+
+저장소 루트에 index.html이 바로 있다면 Root Directory는 비워 두세요.
+
 
 ■ 방법 4: 로컬에서 메일 기능까지 테스트 (vercel dev)
 ----------------------------------------
