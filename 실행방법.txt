@@ -1,0 +1,93 @@
+========================================
+  일본어 단어 퀴즈 - 실행 방법
+========================================
+
+■ 방법 1: 파일 더블클릭 (퀴즈만)
+----------------------------------------
+1. 'japan APP' 폴더를 연다.
+2. 'index.html' 파일을 더블클릭한다.
+3. 기본 웹 브라우저에서 퀴즈가 열린다.
+
+※ 메일 보내기 버튼은 서버가 필요해 이 방법에선 동작하지 않습니다.
+
+
+■ 방법 2: 브라우저에서 직접 열기
+----------------------------------------
+1. 브라우저 주소창에 입력:
+   file:///C:/Users/gksys/japan APP/index.html
+2. Enter (메일 기능 제외 퀴즈만 사용 가능)
+
+
+■ 방법 3: Vercel로 배포 (추천 - 퀴즈 + 메일 모두 사용)
+----------------------------------------
+인터넷에 올려서 누구나 접속해 퀴즈하고, 메일 보내기까지 쓰려면:
+
+1. Node.js 설치 (https://nodejs.org)
+
+2. Vercel 가입
+   - https://vercel.com 접속 후 GitHub/이메일로 가입
+
+3. 터미널에서 프로젝트 폴더로 이동 후 배포:
+   cd "C:\Users\gksys\japan APP"
+   npx vercel
+
+   (처음이면 로그인 안내가 나옵니다. 따라 하면 됩니다.)
+
+4. 배포가 끝나면 주소가 나옵니다. 예:
+   https://japan-app-quiz-xxxx.vercel.app
+
+5. 메일 보내기 기능을 쓰려면 Vercel에서 환경 변수 설정:
+   - Vercel 대시보드 → 해당 프로젝트 선택 → Settings → Environment Variables
+   - 다음 두 개 추가:
+     이름: RESEND_API_KEY  값: (resend.com에서 발급한 API 키)
+     이름: FROM_EMAIL      값: onboarding@resend.dev
+   - 저장 후 프로젝트를 한 번 다시 배포 (Deployments → ... → Redeploy)
+
+6. Resend API 키 발급
+   - https://resend.com 가입 후 API Keys에서 생성
+   - 생성한 키를 위 RESEND_API_KEY 값으로 넣으면 됩니다.
+
+※ 배포 후 나온 URL로 접속하면 퀴즈와 메일 보내기가 모두 동작합니다.
+  문의 내용은 ssaebbung@gmail.com 으로 전달됩니다.
+
+■ Vercel에서 404가 날 때 (해결 방법)
+----------------------------------------
+GitHub 저장소에 "japan APP" 폴더가 있는 구조라면, Vercel이 루트에서
+index.html을 찾지 못해 404가 납니다.
+
+해결: Vercel 대시보드에서
+  1. 해당 프로젝트 클릭
+  2. Settings → General
+  3. "Root Directory" 항목에서 "Edit" 클릭
+  4. 값에 "japan APP" 입력 (저장소 안의 폴더 이름 그대로)
+  5. Save 후 Deployments → 맨 위 배포의 ... → Redeploy
+
+저장소 루트에 index.html이 바로 있다면 Root Directory는 비워 두세요.
+
+
+■ 방법 4: 로컬에서 메일 기능까지 테스트 (vercel dev)
+----------------------------------------
+배포 전에 컴퓨터에서 메일 전송까지 확인하려면:
+
+1. Node.js 설치 후:
+   cd "C:\Users\gksys\japan APP"
+   npm install
+
+2. .env 파일 생성 (프로젝트 폴더에):
+   RESEND_API_KEY=re_여기에_발급받은_키
+   FROM_EMAIL=onboarding@resend.dev
+
+3. 실행:
+   npx vercel dev
+
+4. 브라우저에서 http://localhost:3000 접속
+   (메일 보내기 버튼이 로컬에서도 동작합니다.)
+
+
+========================================
+  요약
+========================================
+• 퀴즈만: index.html 더블클릭 또는 방법 2
+• 퀴즈 + 메일, 인터넷 배포: 방법 3 (Vercel)
+• 로컬에서 메일 테스트: 방법 4 (vercel dev)
+========================================
