@@ -8,13 +8,20 @@
     count: 0,
     currentIndex: 0,
     correctCount: 0,
-    type: "multiple", // 'multiple' | 'subjective'
-    results: [], // { word, correct, userAnswer }
+    type: "multiple",
+    results: [],
   };
 
+  let flashcardIndex = 0;
+
   const $ = (id) => document.getElementById(id);
+  const pages = {
+    home: $("page-home"),
+    quiz: $("page-quiz"),
+    flashcard: $("page-flashcard"),
+    words: $("page-words"),
+  };
   const screens = {
-    setup: $("setup-screen"),
     quiz: $("quiz-screen"),
     result: $("result-screen"),
   };
@@ -41,7 +48,7 @@
   const scorePercent = $("score-percent");
   const resultDetails = $("result-details");
   const retryBtn = $("retry-btn");
-  // ---- Resend 메일 (ssaebbung@gmail.com 수신) ----
+  const quizBackBtn = $("quiz-back-btn");
   const MAIL_API = "/api/send-contact";
   const mailBtn = $("mail-btn");
   const mailModal = $("mail-modal");
@@ -51,10 +58,33 @@
   const mailFormMessage = $("mail-form-message");
   const mailSubmit = $("mail-submit");
 
-  function showScreen(name) {
-    Object.keys(screens).forEach((key) => {
-      screens[key].classList.toggle("active", key === name);
+  function getPageFromHash() {
+    const hash = (window.location.hash || "#home").slice(1);
+    return pages[hash] ? hash : "home";
+  }
+
+  function showPage(pageId) {
+    Object.keys(pages).forEach((key) => {
+      if (pages[key]) pages[key].classList.toggle("active", key === pageId);
     });
+    document.querySelectorAll(".nav-link").forEach((a) => {
+      a.classList.toggle("active", (a.dataset.page || "") === pageId);
+    });
+    if (screens.quiz) screens.quiz.classList.remove("active");
+    if (screens.result) screens.result.classList.remove("active");
+  }
+
+  function showQuizScreen() {
+    Object.keys(pages).forEach((key) => {
+      if (pages[key]) pages[key].classList.remove("active");
+    });
+    if (screens.quiz) screens.quiz.classList.add("active");
+    if (screens.result) screens.result.classList.remove("active");
+  }
+
+  function showResultScreen() {
+    if (screens.quiz) screens.quiz.classList.remove("active");
+    if (screens.result) screens.result.classList.add("active");
   }
 
   function shuffle(arr) {
@@ -105,7 +135,7 @@
     quizState.type = type;
     quizState.results = [];
 
-    showScreen("quiz");
+    showQuizScreen();
     subjectiveAnswer.value = "";
     feedback.classList.add("hidden");
     renderQuestion();
@@ -231,7 +261,55 @@
       )
       .join("");
 
-    showScreen("result");
+    showResultScreen();
+  }
+
+  function goBackToQuizSetup() {
+    showPage("quiz");
+  }
+
+  function renderFlashcard() {
+    const w = JAPANESE_WORDS[flashcardIndex];
+    if (!w) return;
+    const fcEl = $("flashcard");
+    const fcWord = $("fc-word");
+    const fcReading = $("fc-reading");
+    const fcMeaning = $("fc-meaning");
+    const fcCounter = $("fc-counter");
+    if (fcWord) fcWord.textContent = w.ja;
+    if (fcReading) fcReading.textContent = w.reading;
+    if (fcMeaning) fcMeaning.textContent = w.meaning;
+    if (fcCounter) fcCounter.textContent = `${flashcardIndex + 1} / ${MAX_WORDS}`;
+    if (fcEl) fcEl.classList.remove("flipped");
+  }
+
+  function initFlashcard() {
+    flashcardIndex = 0;
+    renderFlashcard();
+  }
+
+  function renderWordsList(filter) {
+    const listEl = $("words-list");
+    if (!listEl) return;
+    const f = (filter || "").trim().toLowerCase();
+    const items = f
+      ? JAPANESE_WORDS.filter(
+          (w) =>
+            w.ja.toLowerCase().includes(f) ||
+            w.reading.toLowerCase().includes(f) ||
+            w.meaning.toLowerCase().includes(f)
+        )
+      : JAPANESE_WORDS;
+    listEl.innerHTML = items
+      .map(
+        (w) =>
+          `<div class="word-item">
+            <span class="word-item-ja">${w.ja}</span>
+            <span class="word-item-reading">${w.reading}</span>
+            <span class="word-item-meaning">${w.meaning}</span>
+          </div>`
+      )
+      .join("");
   }
 
   function openMailModal() {
@@ -317,8 +395,40 @@
     });
 
     retryBtn.addEventListener("click", () => {
-      showScreen("setup");
+      showPage("quiz");
     });
+
+    if (quizBackBtn) quizBackBtn.addEventListener("click", goBackToQuizSetup);
+
+    const fcEl = $("flashcard");
+    const fcPrev = $("fc-prev");
+    const fcNext = $("fc-next");
+    if (fcEl) {
+      fcEl.addEventListener("click", () => {
+        fcEl.classList.toggle("flipped");
+      });
+    }
+    if (fcPrev) {
+      fcPrev.addEventListener("click", (e) => {
+        e.stopPropagation();
+        flashcardIndex = flashcardIndex <= 0 ? MAX_WORDS - 1 : flashcardIndex - 1;
+        renderFlashcard();
+      });
+    }
+    if (fcNext) {
+      fcNext.addEventListener("click", (e) => {
+        e.stopPropagation();
+        flashcardIndex = flashcardIndex >= MAX_WORDS - 1 ? 0 : flashcardIndex + 1;
+        renderFlashcard();
+      });
+    }
+
+    const wordsSearch = $("words-search");
+    if (wordsSearch) {
+      wordsSearch.addEventListener("input", () => renderWordsList(wordsSearch.value));
+    }
+
+    window.addEventListener("hashchange", onHashChange);
 
     if (mailBtn) mailBtn.addEventListener("click", openMailModal);
     if (mailModalClose) mailModalClose.addEventListener("click", closeMailModal);
@@ -326,9 +436,20 @@
     if (mailForm) mailForm.addEventListener("submit", onSubmitMail);
   }
 
+  function onHashChange() {
+    const pageId = getPageFromHash();
+    showPage(pageId);
+    if (pageId === "flashcard") initFlashcard();
+    if (pageId === "words") renderWordsList($("words-search")?.value || "");
+  }
+
   function init() {
     wordCountValue.textContent = wordCountInput.value;
     bindEvents();
+    const pageId = getPageFromHash();
+    showPage(pageId);
+    if (pageId === "flashcard") initFlashcard();
+    if (pageId === "words") renderWordsList("");
   }
 
   init();

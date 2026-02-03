@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>일본어 단어 퀴즈</title>
+  <title>日本語学習 - 일본어 공부</title>
+  <meta name="description" content="일본어 단어 퀴즈, 플래시카드, 단어장으로 일본어를 공부하세요.">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,13 +12,46 @@
 </head>
 <body>
   <div class="app">
-    <!-- 설정 화면 -->
-    <section id="setup-screen" class="screen active">
+    <!-- 네비게이션 -->
+    <nav class="nav">
+      <a href="#home" class="nav-link active" data-page="home">ホーム</a>
+      <a href="#quiz" class="nav-link" data-page="quiz">単語クイズ</a>
+      <a href="#flashcard" class="nav-link" data-page="flashcard">フラッシュ</a>
+      <a href="#words" class="nav-link" data-page="words">単語リスト</a>
+    </nav>
+
+    <!-- 홈 화면 -->
+    <section id="page-home" class="page active">
       <header class="header">
-        <h1>日本語単語クイズ</h1>
+        <h1>日本語学習</h1>
+        <p class="subtitle">일본어 단어 퀴즈 · 플래시카드 · 단어장</p>
+      </header>
+      <div class="home-cards">
+        <a href="#quiz" class="home-card" data-page="quiz">
+          <span class="home-card-icon">①②③④</span>
+          <h2>단어 퀴즈</h2>
+          <p>4지선다 / 주관식으로 단어 뜻을 테스트하세요.</p>
+        </a>
+        <a href="#flashcard" class="home-card" data-page="flashcard">
+          <span class="home-card-icon">🃏</span>
+          <h2>플래시카드</h2>
+          <p>카드를 넘기며 단어를 암기하세요.</p>
+        </a>
+        <a href="#words" class="home-card" data-page="words">
+          <span class="home-card-icon">📋</span>
+          <h2>단어 목록</h2>
+          <p>전체 단어를 한눈에 보고 검색할 수 있어요.</p>
+        </a>
+      </div>
+      <button type="button" id="mail-btn" class="btn-mail">✉ 문의하기</button>
+    </section>
+
+    <!-- 퀴즈 설정 화면 -->
+    <section id="page-quiz" class="page">
+      <header class="header">
+        <h1>単語クイズ</h1>
         <p class="subtitle">일본어 단어 퀴즈</p>
       </header>
-
       <div class="setup-card">
         <div class="form-group">
           <label for="word-count">퀴즈 단어 개수</label>
@@ -26,7 +60,6 @@
             <span id="word-count-value">10</span>개
           </div>
         </div>
-
         <div class="form-group">
           <label>퀴즈 유형</label>
           <div class="quiz-type-buttons">
@@ -40,31 +73,26 @@
             </button>
           </div>
         </div>
-
         <button type="button" id="start-btn" class="btn-primary">퀴즈 시작</button>
-        <button type="button" id="mail-btn" class="btn-mail">✉ 메일 보내기</button>
       </div>
     </section>
 
-    <!-- 퀴즈 화면 -->
-    <section id="quiz-screen" class="screen">
+    <!-- 퀴즈 진행 화면 -->
+    <section id="quiz-screen" class="screen fullscreen">
       <div class="quiz-header">
+        <button type="button" class="back-btn" id="quiz-back-btn" aria-label="뒤로">←</button>
         <span id="progress-text">1 / 10</span>
         <div class="progress-bar">
           <div id="progress-fill" class="progress-fill"></div>
         </div>
       </div>
-
       <div class="quiz-content">
-        <!-- 4지선다형 -->
         <div id="multiple-quiz" class="quiz-type-panel">
           <p class="question-label">다음 단어의 뜻을 고르세요</p>
           <p id="multiple-question" class="question-word"></p>
           <p id="multiple-reading" class="question-reading"></p>
           <div id="multiple-choices" class="choices"></div>
         </div>
-
-        <!-- 주관식형 -->
         <div id="subjective-quiz" class="quiz-type-panel hidden">
           <p class="question-label">다음 단어의 뜻을 입력하세요</p>
           <p id="subjective-question" class="question-word"></p>
@@ -75,15 +103,14 @@
           </div>
         </div>
       </div>
-
       <div id="feedback" class="feedback hidden">
         <p id="feedback-message"></p>
         <button type="button" id="next-btn" class="btn-primary">다음</button>
       </div>
     </section>
 
-    <!-- 결과 화면 -->
-    <section id="result-screen" class="screen">
+    <!-- 퀴즈 결과 화면 -->
+    <section id="result-screen" class="screen fullscreen">
       <header class="header">
         <h1>결과</h1>
       </header>
@@ -94,9 +121,47 @@
         <button type="button" id="retry-btn" class="btn-primary">다시 하기</button>
       </div>
     </section>
+
+    <!-- 플래시카드 화면 -->
+    <section id="page-flashcard" class="page">
+      <header class="header">
+        <h1>フラッシュカード</h1>
+        <p class="subtitle">카드를 탭하면 뜻이 보여요</p>
+      </header>
+      <div class="flashcard-wrap">
+        <div id="flashcard" class="flashcard">
+          <div class="flashcard-inner">
+            <div class="flashcard-front">
+              <p id="fc-word" class="fc-word"></p>
+              <p id="fc-reading" class="fc-reading"></p>
+            </div>
+            <div class="flashcard-back">
+              <p id="fc-meaning" class="fc-meaning"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button type="button" id="fc-prev" class="btn-secondary">← 이전</button>
+        <span id="fc-counter" class="fc-counter">1 / 90</span>
+        <button type="button" id="fc-next" class="btn-secondary">다음 →</button>
+      </div>
+    </section>
+
+    <!-- 단어 목록 화면 -->
+    <section id="page-words" class="page">
+      <header class="header">
+        <h1>単語リスト</h1>
+        <p class="subtitle">전체 단어 검색 및 보기</p>
+      </header>
+      <div class="words-search-wrap">
+        <input type="text" id="words-search" class="words-search" placeholder="단어나 뜻으로 검색...">
+      </div>
+      <div id="words-list" class="words-list"></div>
+    </section>
   </div>
 
-  <!-- Resend: 문의 메일 (ssaebbung@gmail.com 수신) -->
+  <!-- 문의 모달 -->
   <div id="mail-modal" class="modal">
     <div class="modal-backdrop"></div>
     <div class="modal-content">

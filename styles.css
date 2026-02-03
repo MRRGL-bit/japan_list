@@ -36,14 +36,284 @@ body {
   padding: 2rem 1.5rem;
 }
 
-/* 화면 전환 */
+/* 페이지 / 화면 전환 */
+.page,
 .screen {
   display: none;
   animation: fadeIn 0.3s ease;
 }
 
+.page.active,
 .screen.active {
   display: block;
+}
+
+.screen.fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: var(--bg);
+  padding-top: 3.5rem;
+  overflow-y: auto;
+}
+
+/* 네비게이션 */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.nav-link {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.nav-link.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+/* 홈 화면 카드 */
+.home-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.home-card {
+  display: block;
+  padding: 1.5rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.home-card:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.home-card-icon {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.home-card h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+.home-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* 퀴즈 뒤로가기 */
+.quiz-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.back-btn {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius);
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text);
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* 플래시카드 */
+.flashcard-wrap {
+  margin-bottom: 1.5rem;
+  perspective: 1000px;
+}
+
+.flashcard {
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  min-height: 180px;
+  cursor: pointer;
+}
+
+.flashcard-inner {
+  position: relative;
+  width: 100%;
+  min-height: 180px;
+  transition: transform 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.flashcard.flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.fc-word {
+  font-family: var(--font-jp);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.fc-reading {
+  font-family: var(--font-jp);
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.fc-meaning {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.flashcard-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.25rem;
+  border: 2px solid var(--border);
+  background: var(--card);
+  border-radius: var(--radius);
+  font-family: var(--font-kr);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.fc-counter {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  min-width: 4rem;
+  text-align: center;
+}
+
+/* 단어 목록 */
+.words-search-wrap {
+  margin-bottom: 1rem;
+}
+
+.words-search {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-kr);
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.words-search:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.words-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.word-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  background: var(--card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.word-item-ja {
+  font-family: var(--font-jp);
+  font-weight: 600;
+  min-width: 4rem;
+}
+
+.word-item-reading {
+  font-family: var(--font-jp);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  min-width: 6rem;
+}
+
+.word-item-meaning {
+  color: var(--text);
+  margin-left: auto;
 }
 
 @keyframes fadeIn {
